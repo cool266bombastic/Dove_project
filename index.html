@@ -1,0 +1,201 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dove Smart Mirror – See the Real You, Care with Dove</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.24.7/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+  <style>
+    body { background-color: #ffffff; font-family: 'Poppins', sans-serif; }
+    .hero-section { background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(240,240,245,0.8)); }
+    .cta-button { transition: all 0.3s ease; }
+    .cta-button:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .mirror-img { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1)); }
+    .feature-card { transition: transform 0.3s ease; }
+    .feature-card:hover { transform: translateY(-5px); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    function Header() {
+      return (
+        <header className="flex justify-between items-center p-6 bg-white shadow-sm">
+          <div className="flex items-center">
+            <img src="dove_logo.png" alt="Dove Logo" className="h-12" />
+            <h1 className="ml-4 text-2xl font-bold text-gray-800 font-['Playfair_Display']">Dove Smart Mirror</h1>
+          </div>
+          <nav>
+            <a href="#features" className="mx-4 text-gray-600 hover:text-blue-500">Features</a>
+            <a href="#offers" className="mx-4 text-gray-600 hover:text-blue-500">Offers</a>
+            <a href="#buy" className="mx-4 text-gray-600 hover:text-blue-500">Buy Now</a>
+          </nav>
+        </header>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section className="hero-section flex flex-col md:flex-row items-center justify-center min-h-screen p-8 text-center md:text-left">
+          <div className="md:w-1/2">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 font-['Playfair_Display'] mb-4">
+              See the Real You, Care with Dove 🕊
+            </h2>
+            <p className="text-lg text-gray-600 mb-6">
+              Discover your skin’s true potential with the <strong>Dove Smart Mirror</strong> – your personal skin expert offering AI-powered skin scans and tailored Dove product recommendations.
+            </p>
+            <p className="text-xl text-blue-600 font-semibold mb-4">Smart Skin. Smart Care. Dove.</p>
+            <a href="#buy" className="cta-button inline-block bg-blue-500 text-white py-3 px-6 rounded-full hover:bg-blue-600">
+              Get Your Smart Mirror Now
+            </a>
+          </div>
+          <div className="md:w-1/2 mt-8 md:mt-0">
+            <img src="dove_smart_mirror.jpg" alt="Dove Smart Mirror" className="mirror-img w-full max-w-md mx-auto" />
+          </div>
+        </section>
+      );
+    }
+
+    function Features() {
+      const features = [
+        { title: "AI-Driven Skin Analysis", desc: "Get a detailed skin scan in seconds, identifying fine lines, hydration levels, and more." },
+        { title: "Daily Skin Tracking", desc: "Sync with the SkinScan App to monitor your skin’s progress over time." },
+        { title: "Personalized Recommendations", desc: "Receive tailored Dove product suggestions for your unique skin needs." },
+        { title: "Confidence & Convenience", desc: "Your beauty routine, simplified and empowered by cutting-edge AI." },
+      ];
+
+      return (
+        <section id="features" className="py-16 px-8 bg-white">
+          <h2 className="text-3xl font-bold text-gray-800 font-['Playfair_Display'] text-center mb-12">
+            Why Choose Dove Smart Mirror? 🌸
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="feature-card bg-gray-50 p-6 rounded-lg shadow-md text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">{feature.title}</h3>
+                <p className="text-gray-600">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function Offers() {
+      const offers = [
+        { title: "Free 1-Year App Subscription", desc: "Unlock the full SkinScan App experience with your Dove Smart Mirror purchase." },
+        { title: "Free Skin Scan + Samples", desc: "Visit a Dove store for a complimentary skin scan and try our premium products." },
+        { title: "Loyalty Rewards", desc: "Earn points with every Dove purchase and redeem exclusive rewards." },
+      ];
+
+      return (
+        <section id="offers" className="py-16 px-8 bg-gray-100">
+          <h2 className="text-3xl font-bold text-gray-800 font-['Playfair_Display'] text-center mb-12">
+            Exclusive Offers Just for You 🎁
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {offers.map((offer, index) => (
+              <div key={index} className="feature-card bg-white p-6 rounded-lg shadow-md text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">{offer.title}</h3>
+                <p className="text-gray-600">{offer.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+
+    function BuyNow() {
+      return (
+        <section id="buy" className="py-16 px-8 bg-white text-center">
+          <h2 className="text-3xl font-bold text-gray-800 font-['Playfair_Display'] mb-6">
+            Get Your Dove Smart Mirror Today
+          </h2>
+          <p className="text-lg text-gray-600 mb-8">
+            Available at malls, salons, Dove outlets, and top e-commerce platforms. Priced at ₹5,000–₹8,000.
+          </p>
+          <a href="#" className="cta-button inline-block bg-blue-500 text-white py-3 px-8 rounded-full hover:bg-blue-600">
+            Shop Now
+          </a>
+          <p className="text-sm text-gray-500 mt-4">
+            Join the beauty revolution with influencers, in-store demos, and salon tie-ups!
+          </p>
+        </section>
+      );
+    }
+
+    function Footer() {
+      return (
+        <footer className="bg-gray-800 text-white py-8 px-8 text-center">
+          <p className="text-lg font-['Playfair_Display'] mb-2">Dove Smart Mirror – Your Personal Skin Expert, Anytime, Anywhere.</p>
+          <p className="text-sm">© 2025 Dove. All rights reserved.</p>
+          <div className="mt-4">
+            <a href="https://www.dove.com" className="text-gray-300 hover:text-white mx-2">Visit Dove</a>
+            <a href="#" className="text-gray-300 hover:text-white mx-2">Privacy Policy</a>
+            <a href="#" className="text-gray-300 hover:text-white mx-2">Contact Us</a>
+          </div>
+        </footer>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Header />
+          <Hero />
+          <Features />
+          <Offers />
+          <BuyNow />
+          <Footer />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
